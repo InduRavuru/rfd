@@ -99,6 +99,36 @@
 											"min": 4,
 											"max": 5
 										}
+									},
+									{
+										"name": "groupDetails4",
+										"description": "description",
+										"type": "group",
+										"properties": {
+											"displayName": "group4",
+											"editable": true,
+											"display": true,
+											"mandatory": true,
+											"expanded": true
+										},
+										"children": [
+											{
+												"name": "textbox7",
+												"description": "description",
+												"placeholder": "Enter the text",
+												"type": "textbox",
+												"value": "",
+												"tooltipPlacement": "bottom",
+												"properties": {
+													"displayName": "Textbox6",
+													"editable": true,
+													"display": true,
+													"mandatory": true,
+													"min": 4,
+													"max": 5
+												}
+											}
+										]
 									}
 								]
 							}

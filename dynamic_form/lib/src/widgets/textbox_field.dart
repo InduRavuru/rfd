@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../models/form_field_model.dart';
 
@@ -30,6 +29,7 @@ class _TextboxFieldState extends State<TextboxField> {
         decoration: InputDecoration(
           labelText: widget.field.displayName + (widget.field.mandatory ? " *" : ""),
           hintText: widget.field.placeholder,
+          suffixIcon: _buildTooltip(context, widget.field.description, widget.field.tooltipPlacement), // Add tooltip
         ),
         enabled: widget.field.editable,
         autovalidateMode: _hasBeenTouched
@@ -49,13 +49,27 @@ class _TextboxFieldState extends State<TextboxField> {
         },
         onTap: () {
           setState(() {
-            _hasBeenTouched = true;
+            _hasBeenTouched = true; // Mark as touched when interacted with
           });
         },
         onChanged: (value) {
           widget.onValueChange(widget.field.name, value); // Pass the correct field name
         },
       ),
+    );
+  }
+
+  /// Build the tooltip icon for the field's description
+  Widget _buildTooltip(BuildContext context, String? description, String tooltipPlacement) {
+    if (description == null || description.isEmpty) {
+      return const SizedBox.shrink(); // Return empty widget if no description
+    }
+
+    return Tooltip(
+      message: description, // Display the field's description as the tooltip message
+      preferBelow: tooltipPlacement == "top", // Show tooltip above or below based on placement
+      verticalOffset: tooltipPlacement == "top" ? 20.0 : -20.0, // Adjust vertical offset
+      child: Icon(Icons.info_outline, size: 20, color: Colors.purple[800]), // Use info_outline icon
     );
   }
 }
