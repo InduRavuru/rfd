@@ -1,0 +1,111 @@
+{
+	"data": {
+		"template": [
+			{
+				"name": "groupDetails",
+				"description": "description",
+				"type": "group",
+				"properties": {
+					"displayName": "group",
+					"editable": true,
+					"display": true,
+					"mandatory": true,
+					"expanded": true
+				},
+				"children": [
+					{
+						"name": "textbox3",
+						"description": "description",
+						"placeholder": "Enter the text",
+						"type": "textbox",
+						"value": "",
+						"tooltipPlacement": "left",
+						"execute":["textbox6.value"],
+						"properties": {
+							"displayName": "Textbox3",
+							"editable": true,
+							"display": true,
+							"mandatory": true,
+							"min": 4,
+							"max": 5
+						}
+					},
+					{
+						"name": "textbox4",
+						"description": "description",
+						"placeholder": "Enter the text",
+						"type": "textbox",
+						"value": "",
+						"tooltipPlacement": "top",
+						"properties": {
+							"displayName": "Textbox4",
+							"editable": false,
+							"display": true,
+							"mandatory": false
+						}
+					},
+					{
+						"name": "groupDetails2",
+						"description": "description",
+						"type": "group",
+						"properties": {
+							"displayName": "group2",
+							"editable": true,
+							"display": true,
+							"mandatory": true,
+							"expanded": true
+						},
+						"children": [
+							{
+								"name": "textbox5",
+								"description": "description",
+								"placeholder": "Enter the text",
+								"type": "textbox",
+								"value": "",
+								"tooltipPlacement": "right",
+								"properties": {
+									"displayName": "Textbox5",
+									"editable": true,
+									"display": true,
+									"mandatory": true,
+									"min": 4,
+									"max": 5
+								}
+							},
+							{
+								"name": "groupDetails3",
+								"description": "description",
+								"type": "group",
+								"properties": {
+									"displayName": "group3",
+									"editable": true,
+									"display": true,
+									"mandatory": true,
+									"expanded": true
+								},
+								"children": [
+									{
+										"name": "textbox6",
+										"description": "description",
+										"placeholder": "Enter the text",
+										"type": "textbox",
+										"value": "",
+										"tooltipPlacement": "bottom",
+										"properties": {
+											"displayName": "Textbox6",
+											"editable": true,
+											"display": true,
+											"mandatory": true,
+											"min": 4,
+											"max": 5
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

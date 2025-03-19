@@ -1,0 +1,52 @@
+{
+	"data": {
+		"template": [
+			{
+				"name": "groupDetails",
+				"description": "description",
+                "type": "group",
+                "properties": {
+                    "displayName": "",
+                    "editable": true,
+                    "display": true,
+                    "mandatory": false,
+                    "expanded": true
+                },
+				"children": [
+					{
+						"name": "textbox3",
+						"description": "description",
+						"placeholder": "Enter the text",
+						"type": "textbox",
+						"value": "",
+						"tooltipPlacement": "top",
+						"properties": {
+							"displayName": "Textbox3",
+							"editable": true,
+							"display": true,
+							"mandatory": false,
+							"min": 4,
+							"max": 5
+						}
+					},
+					{
+						"name": "textbox4",
+						"description": "description",
+						"placeholder": "Enter the text",
+						"type": "textbox",
+						"value": "",
+						"tooltipPlacement": "top",
+						"properties": {
+							"displayName": "Textbox4",
+							"editable": false,
+							"display": true,
+							"mandatory": false,
+							"min": 4,
+							"max": 5
+						}
+					}
+				]
+			}
+		]
+	}
+}
