@@ -98,8 +98,9 @@ import '../widgets/textbox_field.dart';
 import '../widgets/checkbox_field.dart';
 import '../widgets/group_field.dart';
 import '../widgets/date_field.dart';
+import '../widgets/multiselect_field.dart';
+import '../widgets/select_field.dart'; // ✅ Import SelectField
 import '../models/group_model.dart';
-import '../widgets/multiselect_field.dart'; // ✅ Import MultiSelectField
 
 class FormService {
   static Widget buildForm(
@@ -146,6 +147,13 @@ class FormService {
             );
           } else if (field['type'] == 'multiselect') {
             return _createMultiSelectField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              config,
+              fieldPath,
+            );
+          } else if (field['type'] == 'select') { // ✅ Add support for select field
+            return _createSelectField(
               FormFieldModel.fromJson(field),
               onValueChange,
               config,
@@ -230,6 +238,22 @@ class FormService {
     if (!field.display) return const SizedBox.shrink();
 
     return MultiSelectField(
+      field: field,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
+
+  static Widget _createSelectField( // ✅ New method for SelectField
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
+
+    return SelectField(
       field: field,
       onValueChange: (fieldName, value) {
         onValueChange(fieldPath, value);

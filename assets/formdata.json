@@ -190,6 +190,32 @@
 													"min": 2,
 													"max": 4
 												}
+											},
+											{
+												"name": "Select",
+												"type": "select",
+												"description":"description",
+												"tooltipPlacement":"left",
+												"placeholder": "Select Status",
+												"label": "label",
+												"id": "id",
+												"values": [
+													{
+														"label": "B.Tech",
+														"id": "1"
+													},
+													{
+														"label": "M.Tech",
+														"id": "2"
+													}
+												],
+												"objectFormat": true,
+												"properties": {
+													"displayName": "Degree",
+													"editable": true,
+													"display": true,
+													"mandatory": true
+												}
 											}
 										]
 									}
