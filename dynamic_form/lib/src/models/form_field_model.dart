@@ -1,23 +1,23 @@
 class FormFieldModel {
-  final String name; // Non-nullable field
+  final String name;
   final String type;
   final String displayName;
   final String description;
   final bool editable;
   final bool display;
   final bool mandatory;
-  final String? placeholder; // Nullable
-  final dynamic min; // ✅ Keep `min` as generic (no specific type)
-  final dynamic max; // ✅ Keep `max` as generic (no specific type)
+  final String? placeholder;
+  final dynamic min; // ✅ Keep as generic type
+  final dynamic max; // ✅ Keep as generic type
   final String tooltipPlacement;
-  final bool isGroup; // ✅ New field for checkbox group
-  final List<String> values; // ✅ Stores checkbox options when `isGroup: true`
-  
-  // ✅ Date-related properties (Dynamic `startRange` & `endRange`)
-  final String startRange; // ✅ Keep as String to prevent assignment issues
-  final String endRange; // ✅ Keep as String to prevent assignment issues
-  final String value; // ✅ Default date selection
-  final String dateFormat; // ✅ Custom date format
+  final bool isGroup;
+  final List<dynamic> values; // ✅ Supports list of objects for multi-select & checkboxes
+
+  // ✅ Date-related properties
+  final String startRange;
+  final String endRange;
+  final String value;
+  final String dateFormat;
 
   FormFieldModel({
     required this.name,
@@ -28,15 +28,15 @@ class FormFieldModel {
     this.display = true,
     this.mandatory = false,
     this.placeholder,
-    this.min, // ✅ Keep `min` generic
-    this.max, // ✅ Keep `max` generic
+    this.min,
+    this.max,
     this.tooltipPlacement = "top",
-    this.isGroup = false, // Default to `false` (for single checkboxes)
-    this.values = const [], // Default to empty list
-    required this.startRange, // ✅ Must be provided by user (String format)
-    required this.endRange, // ✅ Must be provided by user (String format)
+    this.isGroup = false,
+    this.values = const [],
+    this.startRange = "2000", // ✅ Default year range for date picker
+    this.endRange = "2025",
     this.value = "",
-    this.dateFormat = "yyyy-MM-dd", // Default format
+    this.dateFormat = "yyyy-MM-dd", // ✅ Default date format
   });
 
   factory FormFieldModel.fromJson(Map<String, dynamic> json) {
@@ -49,18 +49,19 @@ class FormFieldModel {
       display: json['properties']?['display'] ?? true,
       mandatory: json['properties']?['mandatory'] ?? false,
       placeholder: json['placeholder'],
-      min: json['properties']?['min'], // ✅ No specific type restriction
-      max: json['properties']?['max'], // ✅ No specific type restriction
+      min: json['properties']?['min'], // ✅ No type restriction
+      max: json['properties']?['max'], // ✅ No type restriction
       tooltipPlacement: json['tooltipPlacement'] ?? "top",
-      isGroup: json['isGroup'] ?? false, // ✅ Parse `isGroup`
-      values: (json['values'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // ✅ Parse `values`
-      startRange: json['startRange']?.toString() ?? "2000", // ✅ Ensure string format
-      endRange: json['endRange']?.toString() ?? "2025", // ✅ Ensure string format
+      isGroup: json['isGroup'] ?? false,
+      values: json['values'] ?? [],
+      startRange: json['startRange']?.toString() ?? "2000",
+      endRange: json['endRange']?.toString() ?? "2025",
       value: json['value']?.toString() ?? "",
       dateFormat: json['dateFormat']?.toString() ?? "yyyy-MM-dd",
     );
   }
 }
+
 
 
 

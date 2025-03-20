@@ -146,6 +146,50 @@
 													"min": "2025-01-26",
 													"max": "2025-04-26"
 												}
+											},
+											{
+												"name": "multiselect1",
+												"type": "multiselect",
+												"description":"description",
+												"tooltipPlacement":"left",
+												"placeholder": "Select Status",
+												"label": "status",
+												"id": "id",
+												"values": [
+													{
+														"status": "Floor1",
+														"id": 1
+													},
+													{
+														"status": "Floor2",
+														"id": 2
+													},
+													{
+														"status": "Floor3",
+														"id": 3
+													},
+													{
+														"status": "Floor4",
+														"id": 4
+													},
+													{
+														"status": "Floor5",
+														"id": 5
+													},
+													{
+														"status": "Floor6",
+														"id": 6
+													}
+												],
+												"objectFormat": false,
+												"properties": {
+													"editable": true,
+													"display": true,
+													"mandatory": true,
+													"displayName": "MultiSelect",
+													"min": 2,
+													"max": 4
+												}
 											}
 										]
 									}

@@ -97,8 +97,9 @@ import '../models/form_field_model.dart';
 import '../widgets/textbox_field.dart';
 import '../widgets/checkbox_field.dart';
 import '../widgets/group_field.dart';
-import '../widgets/date_field.dart'; // ✅ Import DateField
+import '../widgets/date_field.dart';
 import '../models/group_model.dart';
+import '../widgets/multiselect_field.dart'; // ✅ Import MultiSelectField
 
 class FormService {
   static Widget buildForm(
@@ -110,7 +111,6 @@ class FormService {
     String parentPath,
   ) {
     return SingleChildScrollView(
-      // ✅ Wrap Column with `SingleChildScrollView` to prevent overflow
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: template.map((field) {
@@ -137,8 +137,15 @@ class FormService {
               config,
               fieldPath,
             );
-          } else if (field['type'] == 'date') { // ✅ Handle date field
+          } else if (field['type'] == 'date') {
             return _createDateField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              config,
+              fieldPath,
+            );
+          } else if (field['type'] == 'multiselect') {
+            return _createMultiSelectField(
               FormFieldModel.fromJson(field),
               onValueChange,
               config,
@@ -207,6 +214,22 @@ class FormService {
     if (!field.display) return const SizedBox.shrink();
 
     return DateField(
+      field: field,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
+
+  static Widget _createMultiSelectField(
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
+
+    return MultiSelectField(
       field: field,
       onValueChange: (fieldName, value) {
         onValueChange(fieldPath, value);
