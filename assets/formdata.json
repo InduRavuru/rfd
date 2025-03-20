@@ -128,6 +128,24 @@
 													"display": true,
 													"mandatory": true
 												}
+											},
+											{
+												"name": "dateOfBirth",
+												"type": "date",
+												"description":"description",
+												"tooltipPlacement":"left",
+												"startRange": "1997",
+												"endRange": "2025",
+												"value": "",
+												"dateFormat": "yy-mm-dd",
+												"properties": {
+													"displayName": "Date Of Birth",
+													"editable": true,
+													"display": true,
+													"mandatory": true,
+													"min": "2025-01-26",
+													"max": "2025-04-26"
+												}
 											}
 										]
 									}

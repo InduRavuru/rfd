@@ -13,9 +13,9 @@ class FormFieldModel {
   final bool isGroup; // ✅ New field for checkbox group
   final List<String> values; // ✅ Stores checkbox options when `isGroup: true`
   
-  // ✅ Date-related properties
-  final String? startRange;
-  final String? endRange;
+  // ✅ Date-related properties (Dynamic `startRange` & `endRange`)
+  final String startRange; // ✅ Keep as String to prevent assignment issues
+  final String endRange; // ✅ Keep as String to prevent assignment issues
   final String value; // ✅ Default date selection
   final String dateFormat; // ✅ Custom date format
 
@@ -33,8 +33,8 @@ class FormFieldModel {
     this.tooltipPlacement = "top",
     this.isGroup = false, // Default to `false` (for single checkboxes)
     this.values = const [], // Default to empty list
-    this.startRange,
-    this.endRange,
+    required this.startRange, // ✅ Must be provided by user (String format)
+    required this.endRange, // ✅ Must be provided by user (String format)
     this.value = "",
     this.dateFormat = "yyyy-MM-dd", // Default format
   });
@@ -54,13 +54,15 @@ class FormFieldModel {
       tooltipPlacement: json['tooltipPlacement'] ?? "top",
       isGroup: json['isGroup'] ?? false, // ✅ Parse `isGroup`
       values: (json['values'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // ✅ Parse `values`
-      startRange: json['startRange']?.toString(),
-      endRange: json['endRange']?.toString(),
+      startRange: json['startRange']?.toString() ?? "2000", // ✅ Ensure string format
+      endRange: json['endRange']?.toString() ?? "2025", // ✅ Ensure string format
       value: json['value']?.toString() ?? "",
       dateFormat: json['dateFormat']?.toString() ?? "yyyy-MM-dd",
     );
   }
 }
+
+
 
 
 

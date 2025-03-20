@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // ✅ For date formatting
+
 import '../models/form_field_model.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DateField extends StatefulWidget {
   final FormFieldModel field;
@@ -17,121 +18,119 @@ class DateField extends StatefulWidget {
 }
 
 class _DateFieldState extends State<DateField> {
-  DateTime? _selectedDate;
-  String? _errorText; // Validation message
-  late DateFormat _dateFormat;
-  DateTime? _minDate;
-  DateTime? _maxDate;
-  bool _hasBeenTouched = false; // ✅ Track if field was interacted with
+  late TextEditingController _controller;
+  bool _hasBeenTouched = false;
 
   @override
   void initState() {
     super.initState();
-    
-    // ✅ Initialize date format
-    _dateFormat = _parseDateFormat(widget.field.dateFormat);
-
-    // ✅ Parse min & max date range
-    _minDate = widget.field.min != null ? DateTime.tryParse(widget.field.min!) : null;
-    _maxDate = widget.field.max != null ? DateTime.tryParse(widget.field.max!) : null;
-
-    // ✅ Set default date if provided
-    if (widget.field.value.isNotEmpty) {
-      _selectedDate = DateTime.tryParse(widget.field.value);
-    }
+    _controller = TextEditingController(text: widget.field.value);
   }
 
-  /// ✅ Handle date selection
-  Future<void> _selectDate(BuildContext context) async {
-    if (!widget.field.editable) return; // Prevent selection if `editable: false`
-
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(int.tryParse(widget.field.startRange) ?? 2000),
-      lastDate: DateTime(int.tryParse(widget.field.endRange) ?? 2025),
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      if (_isDateOutOfRange(pickedDate)) {
-        setState(() {
-          _errorText = "Date must be between ${widget.field.min} and ${widget.field.max}";
-        });
-      } else {
-        setState(() {
-          _selectedDate = pickedDate;
-          _errorText = null;
-          _hasBeenTouched = true;
-        });
-
-        // ✅ Pass formatted date value to parent
-        widget.onValueChange(widget.field.name, _dateFormat.format(pickedDate));
-      }
-    }
-  }
-
-  /// ✅ Validate if selected date is within the allowed range
-  bool _isDateOutOfRange(DateTime date) {
-    return (_minDate != null && date.isBefore(_minDate!)) || (_maxDate != null && date.isAfter(_maxDate!));
-  }
-
-  /// ✅ Parse date format (Supports `yy-mm-dd`, `dd-mm-yyyy`, etc.)
+  /// ✅ Parses Date Format from JSON
   DateFormat _parseDateFormat(String format) {
-    switch (format.toLowerCase()) {
-      case "yy-mm-dd":
+    switch (format) {
+      case "yy-MM-dd":
         return DateFormat("yy-MM-dd");
-      case "dd-mm-yyyy":
+      case "dd-MM-yyyy":
         return DateFormat("dd-MM-yyyy");
-      case "mm-dd-yyyy":
+      case "MM-dd-yyyy":
         return DateFormat("MM-dd-yyyy");
       default:
-        return DateFormat("yyyy-MM-dd"); // Default format
+        return DateFormat("yyyy-MM-dd");
+    }
+  }
+
+  /// ✅ Ensures `initialDate` is valid
+  DateTime _getValidInitialDate() {
+    DateTime now = DateTime.now();
+    DateTime minDate = DateTime.tryParse(widget.field.min ?? now.toString()) ?? now;
+    DateTime maxDate = DateTime.tryParse(widget.field.max ?? now.toString()) ?? now;
+    DateTime initialDate = DateTime.tryParse(widget.field.value) ?? minDate;
+
+    if (initialDate.isBefore(minDate)) return minDate;
+    if (initialDate.isAfter(maxDate)) return maxDate;
+    return initialDate;
+  }
+
+  void _selectDate() async {
+    DateTime now = DateTime.now();
+    DateTime minDate = DateTime.tryParse(widget.field.min ?? now.toString()) ?? now;
+    DateTime maxDate = DateTime.tryParse(widget.field.max ?? now.toString()) ?? now;
+    DateTime initialDate = _getValidInitialDate();
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: minDate,
+      lastDate: maxDate,
+    );
+
+    if (picked != null) {
+      String formattedDate = _parseDateFormat(widget.field.dateFormat).format(picked);
+      setState(() {
+        _controller.text = formattedDate;
+        _hasBeenTouched = true;
+      });
+      widget.onValueChange(widget.field.name, formattedDate);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.field.display) return const SizedBox.shrink(); // ✅ Hide if `display: false`
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.field.displayName + (widget.field.mandatory ? " *" : ""),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          GestureDetector(
-            onTap: () => _selectDate(context),
-            child: AbsorbPointer(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: "Select a date",
-                  suffixIcon: _buildTooltip(context),
-                  errorText: (_hasBeenTouched || _errorText != null) && widget.field.mandatory && _selectedDate == null
-                      ? "This field is required"
-                      : _errorText,
-                ),
-                controller: TextEditingController(
-                  text: _selectedDate != null ? _dateFormat.format(_selectedDate!) : "",
-                ),
-                enabled: widget.field.editable,
-                autovalidateMode: _hasBeenTouched ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled,
+      child: TextFormField(
+        controller: _controller,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: widget.field.displayName + (widget.field.mandatory ? " *" : ""),
+          hintText: "Select a date",
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTooltip(widget.field.description, widget.field.tooltipPlacement),
+              IconButton(
+                icon: Icon(Icons.calendar_today),
+                onPressed: widget.field.editable ? _selectDate : null,
               ),
-            ),
+            ],
           ),
-        ],
+        ),
+        enabled: widget.field.editable,
+        autovalidateMode: _hasBeenTouched
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
+        validator: (value) {
+          if (widget.field.mandatory && (value == null || value.trim().isEmpty)) {
+            return "This field is required";
+          }
+          DateTime? date = DateTime.tryParse(value ?? "");
+          DateTime? minDate = DateTime.tryParse(widget.field.min ?? "");
+          DateTime? maxDate = DateTime.tryParse(widget.field.max ?? "");
+
+          if (minDate != null && date != null && date.isBefore(minDate)) {
+            return "Date should not be before ${widget.field.min}";
+          }
+          if (maxDate != null && date != null && date.isAfter(maxDate)) {
+            return "Date should not be after ${widget.field.max}";
+          }
+          return null;
+        },
+        onTap: widget.field.editable ? _selectDate : null,
       ),
     );
   }
 
-  Widget _buildTooltip(BuildContext context) {
+  /// ✅ Tooltip for description
+  Widget _buildTooltip(String description, String tooltipPlacement) {
+    if (description.isEmpty) return const SizedBox.shrink();
+
     return Tooltip(
-      message: widget.field.description,
-      preferBelow: true,
-      verticalOffset: 20.0,
-      child: Icon(Icons.calendar_today, size: 20),
+      message: description,
+      preferBelow: tooltipPlacement == "top",
+      verticalOffset: tooltipPlacement == "top" ? 20.0 : -20.0,
+      child: Icon(Icons.info_outline, size: 20, color: Colors.purple[800]),
     );
   }
 }
