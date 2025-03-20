@@ -1,4 +1,3 @@
-
 // import 'package:flutter/material.dart';
 // import '../models/form_field_model.dart';
 // import '../models/group_model.dart';
@@ -93,64 +92,81 @@
 //   }
 // }
 
-
-
-
-
 import 'package:flutter/material.dart';
 import '../models/form_field_model.dart';
 import '../widgets/textbox_field.dart';
+import '../widgets/checkbox_field.dart';
 import '../widgets/group_field.dart';
-import '../models/group_model.dart'; // Import GroupModel
+import '../widgets/date_field.dart'; // ✅ Import DateField
+import '../models/group_model.dart';
 
 class FormService {
   static Widget buildForm(
     List<dynamic> template,
-    Function(String, String) onValueChange,
+    Function(String, dynamic) onValueChange,
     Map<String, TextEditingController> controllers,
     Map<String, dynamic> config,
     VoidCallback onValidationChange,
     String parentPath,
   ) {
-    return Column(
-      children: template.map((field) {
-        String fieldPath =
-            parentPath.isEmpty ? field['name'] : '$parentPath.${field['name']}';
-        if (field['type'] == 'group') {
-          // Ensure the group's config is initialized
-          if (config[field['name']] == null) {
-            config[field['name']] = <String, dynamic>{};
+    return SingleChildScrollView(
+      // ✅ Wrap Column with `SingleChildScrollView` to prevent overflow
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: template.map((field) {
+          String fieldPath = parentPath.isEmpty
+              ? field['name']
+              : '$parentPath.${field['name']}';
+
+          if (field['type'] == 'group') {
+            if (config[field['name']] == null) {
+              config[field['name']] = <String, dynamic>{};
+            }
+            return _createGroup(
+              GroupModel.fromJson(field),
+              onValueChange,
+              controllers,
+              config[field['name']],
+              onValidationChange,
+              fieldPath,
+            );
+          } else if (field['type'] == 'checkbox') {
+            return _createCheckboxField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              config,
+              fieldPath,
+            );
+          } else if (field['type'] == 'date') { // ✅ Handle date field
+            return _createDateField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              config,
+              fieldPath,
+            );
+          } else {
+            return _createFormField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              controllers,
+              config,
+              fieldPath,
+            );
           }
-          return _createGroup(
-            GroupModel.fromJson(field),
-            onValueChange,
-            controllers,
-            config[field['name']],
-            onValidationChange,
-            fieldPath,
-          );
-        } else {
-          return _createFormField(
-            FormFieldModel.fromJson(field),
-            onValueChange,
-            controllers,
-            config,
-            fieldPath,
-          );
-        }
-      }).toList(),
+        }).toList(),
+      ),
     );
   }
 
   static Widget _createGroup(
     GroupModel group,
-    Function(String, String) onValueChange,
+    Function(String, dynamic) onValueChange,
     Map<String, TextEditingController> controllers,
     Map<String, dynamic> config,
     VoidCallback onValidationChange,
     String parentPath,
   ) {
-    if (!group.display || group.name == null) return const SizedBox.shrink();
+    if (!group.display) return const SizedBox.shrink();
 
     return GroupField(
       group: group,
@@ -160,27 +176,60 @@ class FormService {
         controllers,
         config,
         onValidationChange,
-        parentPath, // Pass the parentPath to child fields
+        parentPath,
       ),
       onValidationChange: onValidationChange,
     );
   }
 
+  static Widget _createCheckboxField(
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
+
+    return CheckboxField(
+      field: field,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
+
+  static Widget _createDateField(
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
+
+    return DateField(
+      field: field,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
+
   static Widget _createFormField(
     FormFieldModel field,
-    Function(String, String) onValueChange,
+    Function(String, dynamic) onValueChange,
     Map<String, TextEditingController> controllers,
     Map<String, dynamic> config,
-    String fieldPath, // Add fieldPath parameter
+    String fieldPath,
   ) {
-    if (!field.display || field.name == null) return const SizedBox.shrink();
+    if (!field.display) return const SizedBox.shrink();
 
     TextEditingController controller = controllers[field.name]!;
+
     return TextboxField(
       field: field,
       controller: controller,
       onValueChange: (fieldName, value) {
-        onValueChange(fieldPath, value); // Pass the full fieldPath to onValueChange
+        onValueChange(fieldPath, value);
       },
     );
   }

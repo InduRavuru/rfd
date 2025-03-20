@@ -113,19 +113,20 @@
 										},
 										"children": [
 											{
-												"name": "textbox7",
-												"description": "description",
-												"placeholder": "Enter the text",
-												"type": "textbox",
-												"value": "",
-												"tooltipPlacement": "bottom",
+												"name": "checkbox",
+												"type": "checkbox",
+												"description":"description",
+												"tooltipPlacement":"right",
+												"isGroup": true,
+												"values": [
+													"checkbox1",
+													"checkbox2"
+												],
 												"properties": {
-													"displayName": "Textbox6",
+													"displayName": "Checkbox",
 													"editable": true,
 													"display": true,
-													"mandatory": true,
-													"min": 4,
-													"max": 5
+													"mandatory": true
 												}
 											}
 										]

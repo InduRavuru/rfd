@@ -145,7 +145,30 @@ class FormRendererState extends State<FormRenderer> {
   }
 
   /// Update `_config` dynamically when user types
-  void _updateConfig(String fieldPath, String newValue) {
+  // void _updateConfig(String fieldPath, String newValue) {
+  //   print("Updating Config: $fieldPath = $newValue"); // Debug log
+
+  //   List<String> keys = fieldPath.split('.');
+  //   Map<String, dynamic> ref = _config;
+
+  //   // Navigate through the nested structure
+  //   for (int i = 0; i < keys.length - 1; i++) {
+  //     if (!ref.containsKey(keys[i])) {
+  //       ref[keys[i]] = {}; // Create nested structure if missing
+  //     }
+  //     ref = ref[keys[i]];
+  //   }
+
+  //   // Update the final key with the new value directly
+  //   ref[keys.last] = newValue;
+
+  //   print("Updated Config: ${_config.toString()}"); // Debug log
+  // }
+
+
+
+
+  void _updateConfig(String fieldPath, dynamic newValue) { // ✅ Accepts `dynamic` type
     print("Updating Config: $fieldPath = $newValue"); // Debug log
 
     List<String> keys = fieldPath.split('.');
@@ -153,17 +176,18 @@ class FormRendererState extends State<FormRenderer> {
 
     // Navigate through the nested structure
     for (int i = 0; i < keys.length - 1; i++) {
-      if (!ref.containsKey(keys[i])) {
-        ref[keys[i]] = {}; // Create nested structure if missing
-      }
-      ref = ref[keys[i]];
+        if (!ref.containsKey(keys[i]) || ref[keys[i]] is! Map<String, dynamic>) {
+            ref[keys[i]] = <String, dynamic>{}; // ✅ Ensure nested structure exists
+        }
+        ref = ref[keys[i]];
     }
 
-    // Update the final key with the new value directly
+    // Update the final key with the new value
     ref[keys.last] = newValue;
 
     print("Updated Config: ${_config.toString()}"); // Debug log
-  }
+}
+
 
   /// Submit form & return structured data
   Map<String, dynamic> submitForm() {
