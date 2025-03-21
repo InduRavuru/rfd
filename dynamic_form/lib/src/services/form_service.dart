@@ -99,7 +99,8 @@ import '../widgets/checkbox_field.dart';
 import '../widgets/group_field.dart';
 import '../widgets/date_field.dart';
 import '../widgets/multiselect_field.dart';
-import '../widgets/select_field.dart'; // ✅ Import SelectField
+import '../widgets/select_field.dart';
+import '../widgets/radio_field.dart'; // ✅ Import RadioField
 import '../models/group_model.dart';
 
 class FormService {
@@ -152,8 +153,15 @@ class FormService {
               config,
               fieldPath,
             );
-          } else if (field['type'] == 'select') { // ✅ Add support for select field
+          } else if (field['type'] == 'select') {
             return _createSelectField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              config,
+              fieldPath,
+            );
+          } else if (field['type'] == 'radio') { // ✅ Add support for radio field
+            return _createRadioField(
               FormFieldModel.fromJson(field),
               onValueChange,
               config,
@@ -245,7 +253,7 @@ class FormService {
     );
   }
 
-  static Widget _createSelectField( // ✅ New method for SelectField
+  static Widget _createSelectField(
     FormFieldModel field,
     Function(String, dynamic) onValueChange,
     Map<String, dynamic> config,
@@ -254,6 +262,22 @@ class FormService {
     if (!field.display) return const SizedBox.shrink();
 
     return SelectField(
+      field: field,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
+
+  static Widget _createRadioField(
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
+
+    return RadioField(
       field: field,
       onValueChange: (fieldName, value) {
         onValueChange(fieldPath, value);

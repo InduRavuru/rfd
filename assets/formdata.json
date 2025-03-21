@@ -216,6 +216,23 @@
 													"display": true,
 													"mandatory": true
 												}
+											},
+											{
+												"name": "Gender",
+												"description": "Select your Gender",
+												"tooltipPlacement":"left",
+												"type": "radio",
+												"value": "",
+												"values": [
+													"Male",
+													"Female"
+												],
+												"properties": {
+													"displayName": "Radio",
+													"editable": true,
+													"display": true,
+													"mandatory": true
+												}
 											}
 										]
 									}
