@@ -126,23 +126,29 @@ class FormRendererState extends State<FormRenderer> {
   }
 
   /// Initialize controllers & ensure `_config` maintains correct structure
-  void _initializeControllers(
-      List<dynamic> template, Map<String, dynamic> parentConfig) {
-    print("Initializing Controllers for: ${parentConfig.toString()}"); // Debug log
-    for (var field in template) {
-      if (field['type'] == 'textbox') {
-        _controllers[field['name']] = TextEditingController(text: field['value'] ?? "");
-        parentConfig[field['name']] = field['value'] ?? "";
-        print("Added Textbox: ${field['name']}"); // Debug log
-      } else if (field['type'] == 'group') {
-        if (parentConfig[field['name']] == null) {
-          parentConfig[field['name']] = <String, dynamic>{};
-        }
-        print("Initializing Group: ${field['name']}"); // Debug log
-        _initializeControllers(field['children'], parentConfig[field['name']]);
+  void _initializeControllers(List<dynamic> template, Map<String, dynamic> parentConfig) {
+  for (var field in template) {
+    final type = field['type'];
+    final name = field['name'];
+
+    if (type == 'textbox' || type == 'textarea') {
+      final initialValue = field['value']?.toString() ?? "";
+      _controllers[name] = TextEditingController(text: initialValue);
+      parentConfig[name] = initialValue;
+    } else if (type == 'group') {
+      if (!parentConfig.containsKey(name)) {
+        parentConfig[name] = <String, dynamic>{};
+      }
+      _initializeControllers(field['children'], parentConfig[name]);
+    } else {
+      // Handle default initialization for other types (e.g. checkbox, select, etc.)
+      if (!parentConfig.containsKey(name)) {
+        parentConfig[name] = field['value'] ?? "";
       }
     }
   }
+}
+
 
   /// Update `_config` dynamically when user types
   // void _updateConfig(String fieldPath, String newValue) {

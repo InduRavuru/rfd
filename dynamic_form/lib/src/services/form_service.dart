@@ -103,6 +103,7 @@ import '../widgets/select_field.dart';
 import '../widgets/radio_field.dart'; // ✅ Import RadioField
 import '../models/group_model.dart';
 import '../widgets/switch_field.dart';
+import '../widgets/textarea_field.dart';
 
 class FormService {
   static Widget buildForm(
@@ -173,6 +174,14 @@ class FormService {
             return _createSwitchField(
               FormFieldModel.fromJson(field),
               onValueChange,
+              config,
+              fieldPath,
+            );
+          } else if (field['type'] == 'textarea') {
+            return _createTextareaField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              controllers,
               config,
               fieldPath,
             );
@@ -294,21 +303,41 @@ class FormService {
     );
   }
 
-static Widget _createSwitchField(
-  FormFieldModel field,
-  Function(String, dynamic) onValueChange,
-  Map<String, dynamic> config,
-  String fieldPath,
-) {
-  if (!field.display) return const SizedBox.shrink();
+  static Widget _createSwitchField(
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
 
-  return SwitchField(
-    field: field,
-    onValueChange: (fieldName, value) {
-      onValueChange(fieldPath, value);
-    },
-  );
-}
+    return SwitchField(
+      field: field,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
+
+  static Widget _createTextareaField(
+    FormFieldModel field,
+    Function(String, dynamic) onValueChange,
+    Map<String, TextEditingController> controllers,
+    Map<String, dynamic> config,
+    String fieldPath,
+  ) {
+    if (!field.display) return const SizedBox.shrink();
+
+    final controller = controllers[field.name]!;
+
+    return TextareaField(
+      field: field,
+      controller: controller,
+      onValueChange: (fieldName, value) {
+        onValueChange(fieldPath, value);
+      },
+    );
+  }
 
   static Widget _createFormField(
     FormFieldModel field,

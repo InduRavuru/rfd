@@ -254,6 +254,21 @@
 													"display": true,
 													"mandatory": true
 												}
+											},
+											{
+												"name": "textarea",
+												"placeholder": "Mention in detail what relevant skill.",
+												"description":"description",
+												"tooltipPlacement":"left",
+												"type": "textarea",
+												"properties": {
+													"displayName": "Why should you be hired for this role?",
+													"editable": true,
+													"display": true,
+													"mandatory": true,
+													"min": 10,
+													"max": 50
+												}
 											}
 										]
 									}
