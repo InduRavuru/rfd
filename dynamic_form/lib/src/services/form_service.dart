@@ -102,6 +102,7 @@ import '../widgets/multiselect_field.dart';
 import '../widgets/select_field.dart';
 import '../widgets/radio_field.dart'; // ✅ Import RadioField
 import '../models/group_model.dart';
+import '../widgets/switch_field.dart';
 
 class FormService {
   static Widget buildForm(
@@ -160,8 +161,16 @@ class FormService {
               config,
               fieldPath,
             );
-          } else if (field['type'] == 'radio') { // ✅ Add support for radio field
+          } else if (field['type'] == 'radio') {
+            // ✅ Add support for radio field
             return _createRadioField(
+              FormFieldModel.fromJson(field),
+              onValueChange,
+              config,
+              fieldPath,
+            );
+          } else if (field['type'] == 'switch') {
+            return _createSwitchField(
               FormFieldModel.fromJson(field),
               onValueChange,
               config,
@@ -284,6 +293,22 @@ class FormService {
       },
     );
   }
+
+static Widget _createSwitchField(
+  FormFieldModel field,
+  Function(String, dynamic) onValueChange,
+  Map<String, dynamic> config,
+  String fieldPath,
+) {
+  if (!field.display) return const SizedBox.shrink();
+
+  return SwitchField(
+    field: field,
+    onValueChange: (fieldName, value) {
+      onValueChange(fieldPath, value);
+    },
+  );
+}
 
   static Widget _createFormField(
     FormFieldModel field,

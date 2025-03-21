@@ -233,6 +233,27 @@
 													"display": true,
 													"mandatory": true
 												}
+											},
+											{
+												"name": "switch",
+												"type": "switch",
+												"description":"description",
+												"tooltipPlacement":"left",
+												"value": false,
+												"values": [
+													true,
+													false
+												],
+												"labels": [
+													"Yes",
+													"No"
+												],
+												"properties": {
+													"displayName": "Switch",
+													"editable": true,
+													"display": true,
+													"mandatory": true
+												}
 											}
 										]
 									}

@@ -7,13 +7,15 @@ class FormFieldModel {
   final bool display;
   final bool mandatory;
   final String? placeholder;
-  final dynamic min; // ✅ Keep as generic type
-  final dynamic max; // ✅ Keep as generic type
+  final dynamic min;
+  final dynamic max;
   final String tooltipPlacement;
-  final bool isGroup;
-  final List<dynamic> values; // ✅ Supports list of objects for multi-select & checkboxes
 
-  // ✅ Date-related properties
+  final bool isGroup;
+  final List<dynamic> values;
+  final List<String> labels; // ✅ For Switch field labels like ["Yes", "No"]
+
+  // ✅ Date-related fields
   final String startRange;
   final String endRange;
   final String value;
@@ -33,10 +35,11 @@ class FormFieldModel {
     this.tooltipPlacement = "top",
     this.isGroup = false,
     this.values = const [],
-    this.startRange = "2000", // ✅ Default year range for date picker
+    this.labels = const [],
+    this.startRange = "2000",
     this.endRange = "2025",
     this.value = "",
-    this.dateFormat = "yyyy-MM-dd", // ✅ Default date format
+    this.dateFormat = "yyyy-MM-dd",
   });
 
   factory FormFieldModel.fromJson(Map<String, dynamic> json) {
@@ -49,11 +52,12 @@ class FormFieldModel {
       display: json['properties']?['display'] ?? true,
       mandatory: json['properties']?['mandatory'] ?? false,
       placeholder: json['placeholder'],
-      min: json['properties']?['min'], // ✅ No type restriction
-      max: json['properties']?['max'], // ✅ No type restriction
+      min: json['properties']?['min'],
+      max: json['properties']?['max'],
       tooltipPlacement: json['tooltipPlacement'] ?? "top",
       isGroup: json['isGroup'] ?? false,
       values: json['values'] ?? [],
+      labels: (json['labels'] as List?)?.map((e) => e.toString()).toList() ?? [],
       startRange: json['startRange']?.toString() ?? "2000",
       endRange: json['endRange']?.toString() ?? "2025",
       value: json['value']?.toString() ?? "",
@@ -61,6 +65,7 @@ class FormFieldModel {
     );
   }
 }
+
 
 
 
