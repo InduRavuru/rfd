@@ -1,1 +1,395 @@
 
+GLOBAL CONTEXT PROMPT (PASTE FIRST)
+
+You are building a production-grade agentic AI application using FastAPI and LangGraph.
+
+Context:
+- Source: DB2 CREATE TABLE SQL scripts (no DB access, no tools)
+- Target: Microsoft SQL Server
+- Goal: Schema migration + Data migration
+- Constraints:
+  - Script-driven only
+  - Human-in-the-loop
+  - No auto-deployment
+  - Enterprise-safe
+  - Full logging and validation
+
+Architecture:
+- Two workflows:
+  1. Schema Migration Workflow
+  2. Data Migration Workflow
+- Each workflow is composed of multiple LangGraph agents
+- Each agent has a single responsibility
+- Outputs are structured JSON artifacts and SQL scripts
+
+Do not generate mock logic.
+Do not skip edge cases.
+Design for extensibility and auditability.
+
+
+WORKFLOW 1 — SCHEMA MIGRATION
+🔹 TASK 1 — Script Ingestion Agent
+
+Create a LangGraph agent responsible for ingesting DB2 SQL script files.
+
+Responsibilities:
+- Accept one or more SQL files as input
+- Normalize encoding and line endings
+- Preserve original SQL text
+- Split scripts into individual SQL statements
+- Output structured artifacts grouped by statement type
+
+Statement types:
+- CREATE TABLE
+- ALTER TABLE ADD FOREIGN KEY
+- CREATE INDEX
+- CREATE SEQUENCE
+- CREATE VIEW
+- OTHER
+
+Output must be structured and traceable to source files.
+
+
+
+TASK 2 — Schema Classification Agent
+
+Create a LangGraph agent that classifies schema objects extracted from DB2 SQL scripts.
+
+Responsibilities:
+- Identify tables, columns, constraints, indexes, foreign keys
+- Remove foreign key definitions from CREATE TABLE statements
+- Preserve foreign keys as standalone artifacts
+- Normalize object names and schema names
+- Generate object metadata in structured form
+
+Must handle:
+- Inline foreign keys
+- Composite keys
+- Constraint name collisions
+
+
+🔹 TASK 3 — Dependency Analysis Agent
+
+Create a LangGraph agent for foreign key dependency analysis.
+
+Responsibilities:
+- Parse foreign key definitions
+- Build a directed dependency graph (parent → child)
+- Detect circular dependencies
+- Detect self-referencing tables
+- Produce a topological execution order where possible
+- Flag non-resolvable cycles with detailed diagnostics
+
+Output:
+- Dependency graph
+- Execution order
+- Cycle report
+
+
+🔹 TASK 4 — DB2 to MSSQL Schema Conversion Agent
+
+Create a LangGraph agent that converts DB2 CREATE TABLE definitions to Microsoft SQL Server compatible syntax.
+
+Responsibilities:
+- Convert DB2 data types to MSSQL equivalents
+- Handle identity columns and auto-increment logic
+- Convert DEFAULT values and NOT NULL constraints
+- Flag DB2-only features and unsupported syntax
+- Add inline comments explaining risky conversions
+
+Must not:
+- Add foreign keys
+- Execute SQL
+
+
+
+🔹 TASK 5 — Constraint & Index Conversion Agent
+
+Create a LangGraph agent to convert DB2 constraints and indexes to MSSQL syntax.
+
+Responsibilities:
+- Convert PRIMARY KEY and UNIQUE constraints
+- Convert CREATE INDEX statements
+- Ensure constraint and index names are unique
+- Validate referenced columns exist in target schema
+- Separate foreign keys into a deferred execution phase
+
+
+
+🔹 TASK 6 — Phased Script Assembly Agent
+
+Create a LangGraph agent to assemble phased MSSQL migration scripts.
+
+Phases:
+1. CREATE TABLE scripts (no foreign keys)
+2. CREATE INDEX and non-FK constraints
+3. FOREIGN KEY constraints
+
+Responsibilities:
+- Order scripts according to dependency analysis
+- Ensure scripts are idempotent where possible
+- Add safety guards and comments
+- Generate one output file per phase
+
+
+🔹 TASK 7 — Schema Validation & Risk Agent
+
+
+Create a LangGraph agent to validate the generated MSSQL schema scripts.
+
+Responsibilities:
+- Detect missing dependencies
+- Detect invalid data type mappings
+- Flag precision or scale loss
+- Detect reserved keyword conflicts
+- Generate a schema risk assessment report
+
+Output:
+- Validation status
+- Warnings
+- Required manual actions
+
+
+
+
+
+Perfect — this is a prompt-engineering problem, not a coding one 👍
+Below are clean, task-wise prompts you can directly paste into GitHub Copilot (Agent mode) to make it build your FastAPI + LangGraph agentic workflow app.
+❗ As requested:
+✅ ONLY prompts
+❌ No code
+❌ No explanations
+✅ Task-wise
+✅ Covers all edge cases
+✅ Aligned with DB2 → MS SQL migration
+✅ Two workflows (schema + data)
+🔰 GLOBAL CONTEXT PROMPT (PASTE FIRST)
+Copy code
+
+You are building a production-grade agentic AI application using FastAPI and LangGraph.
+
+Context:
+- Source: DB2 CREATE TABLE SQL scripts (no DB access, no tools)
+- Target: Microsoft SQL Server
+- Goal: Schema migration + Data migration
+- Constraints:
+  - Script-driven only
+  - Human-in-the-loop
+  - No auto-deployment
+  - Enterprise-safe
+  - Full logging and validation
+
+Architecture:
+- Two workflows:
+  1. Schema Migration Workflow
+  2. Data Migration Workflow
+- Each workflow is composed of multiple LangGraph agents
+- Each agent has a single responsibility
+- Outputs are structured JSON artifacts and SQL scripts
+
+Do not generate mock logic.
+Do not skip edge cases.
+Design for extensibility and auditability.
+🧩 WORKFLOW 1 — SCHEMA MIGRATION
+🔹 TASK 1 — Script Ingestion Agent
+Copy code
+
+Create a LangGraph agent responsible for ingesting DB2 SQL script files.
+
+Responsibilities:
+- Accept one or more SQL files as input
+- Normalize encoding and line endings
+- Preserve original SQL text
+- Split scripts into individual SQL statements
+- Output structured artifacts grouped by statement type
+
+Statement types:
+- CREATE TABLE
+- ALTER TABLE ADD FOREIGN KEY
+- CREATE INDEX
+- CREATE SEQUENCE
+- CREATE VIEW
+- OTHER
+
+Output must be structured and traceable to source files.
+🔹 TASK 2 — Schema Classification Agent
+Copy code
+
+Create a LangGraph agent that classifies schema objects extracted from DB2 SQL scripts.
+
+Responsibilities:
+- Identify tables, columns, constraints, indexes, foreign keys
+- Remove foreign key definitions from CREATE TABLE statements
+- Preserve foreign keys as standalone artifacts
+- Normalize object names and schema names
+- Generate object metadata in structured form
+
+Must handle:
+- Inline foreign keys
+- Composite keys
+- Constraint name collisions
+🔹 TASK 3 — Dependency Analysis Agent
+Copy code
+
+Create a LangGraph agent for foreign key dependency analysis.
+
+Responsibilities:
+- Parse foreign key definitions
+- Build a directed dependency graph (parent → child)
+- Detect circular dependencies
+- Detect self-referencing tables
+- Produce a topological execution order where possible
+- Flag non-resolvable cycles with detailed diagnostics
+
+Output:
+- Dependency graph
+- Execution order
+- Cycle report
+🔹 TASK 4 — DB2 to MSSQL Schema Conversion Agent
+Copy code
+
+Create a LangGraph agent that converts DB2 CREATE TABLE definitions to Microsoft SQL Server compatible syntax.
+
+Responsibilities:
+- Convert DB2 data types to MSSQL equivalents
+- Handle identity columns and auto-increment logic
+- Convert DEFAULT values and NOT NULL constraints
+- Flag DB2-only features and unsupported syntax
+- Add inline comments explaining risky conversions
+
+Must not:
+- Add foreign keys
+- Execute SQL
+🔹 TASK 5 — Constraint & Index Conversion Agent
+Copy code
+
+Create a LangGraph agent to convert DB2 constraints and indexes to MSSQL syntax.
+
+Responsibilities:
+- Convert PRIMARY KEY and UNIQUE constraints
+- Convert CREATE INDEX statements
+- Ensure constraint and index names are unique
+- Validate referenced columns exist in target schema
+- Separate foreign keys into a deferred execution phase
+🔹 TASK 6 — Phased Script Assembly Agent
+Copy code
+
+Create a LangGraph agent to assemble phased MSSQL migration scripts.
+
+Phases:
+1. CREATE TABLE scripts (no foreign keys)
+2. CREATE INDEX and non-FK constraints
+3. FOREIGN KEY constraints
+
+Responsibilities:
+- Order scripts according to dependency analysis
+- Ensure scripts are idempotent where possible
+- Add safety guards and comments
+- Generate one output file per phase
+🔹 TASK 7 — Schema Validation & Risk Agent
+Copy code
+
+Create a LangGraph agent to validate the generated MSSQL schema scripts.
+
+Responsibilities:
+- Detect missing dependencies
+- Detect invalid data type mappings
+- Flag precision or scale loss
+- Detect reserved keyword conflicts
+- Generate a schema risk assessment report
+
+Output:
+- Validation status
+- Warnings
+- Required manual actions
+🧩 WORKFLOW 2 — DATA MIGRATION
+🔹 TASK 8 — Data Source Ingestion Agent
+Copy code
+
+Create a LangGraph agent to ingest DB2 data sources.
+
+Supported formats:
+- CSV
+- INSERT INTO SQL scripts
+
+Responsibilities:
+- Normalize input data
+- Associate data with target tables
+- Preserve nulls and original values
+- Output data in a schema-aware internal format
+🔹 TASK 9 — Column Mapping Agent
+Copy code
+
+Create a LangGraph agent to map source data columns to target MSSQL schema columns.
+
+Responsibilities:
+- Match source columns to target columns
+- Detect renamed or missing columns
+- Validate data types
+- Produce a column mapping report with confidence scores
+🔹 TASK 10 — Data Load Order Planning Agent
+Copy code
+
+Create a LangGraph agent to determine safe data load order.
+
+Responsibilities:
+- Use dependency graph from schema workflow
+- Produce parent-to-child insertion order
+- Handle self-referencing tables
+- Recommend deferred foreign key enforcement strategy
+🔹 TASK 11 — Data Transformation Agent
+Copy code
+
+Create a LangGraph agent responsible for transforming source data to MSSQL-compatible formats.
+
+Responsibilities:
+- Convert date and timestamp formats
+- Normalize numeric precision and scale
+- Trim or pad string values
+- Handle null and default values
+- Capture row-level transformation errors
+🔹 TASK 12 — Data Load Script Generator Agent
+Copy code
+
+Create a LangGraph agent to generate MSSQL-compatible data load scripts.
+
+Responsibilities:
+- Generate BULK INSERT or batched INSERT scripts
+- Include identity insert handling
+- Temporarily disable foreign key checks during load
+- Ensure transactional safety
+- Output executable SQL scripts without execution
+🔹 TASK 13 — Data Validation Agent
+Copy code
+
+Create a LangGraph agent to validate data migration results.
+
+Responsibilities:
+- Compare source and target row counts
+- Detect nullability violations
+- Identify potential orphan records
+- Generate a data validation summary report
+🛑 FINAL CONTROL AGENT
+🔹 TASK 14 — Human Approval & Audit Agent
+Copy code
+
+Create a LangGraph agent that acts as the final control point.
+
+Responsibilities:
+- Aggregate outputs from all agents
+- Generate a comprehensive migration summary
+- Highlight high-risk areas
+- Require explicit human approval before marking workflow complete
+- Produce audit-ready documentation
+✅ THIS IS IMPORTANT
+These prompts are:
+Complete
+Non-overlapping
+Enterprise-aligned
+Safe for Copilot Agent mode
+LangGraph-friendly
+If you want next:
+I can give folder-level agent wiring prompts
+Or LangGraph state design prompts
+Or FastAPI endpoint-level prompts
+Just tell me 👌
